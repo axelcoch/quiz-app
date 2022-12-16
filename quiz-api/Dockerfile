@@ -12,7 +12,7 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 # Creation d'une base vide
-RUN touch quiz.db
+RUN touch quizdb.db
 
 # Variables d'environement de production
 ENV FLASK_DEBUG=0
