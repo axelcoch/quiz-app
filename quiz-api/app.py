@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS
 
 from jwt_utils import build_token, decode_token
-from model import 
+# from model import 
 
 app = Flask(__name__)
 CORS(app)
