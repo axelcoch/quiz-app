@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS
 
 from jwt_utils import build_token, decode_token
-# from model import 
+import functions
 
 app = Flask(__name__)
 CORS(app)
@@ -29,18 +29,28 @@ def GetPassword():
 @app.route('/questions', methods=['POST'])
 def AddQuestions():
     #Récupérer le token envoyé en paramètre
-    request.headers.get('Authorization')
+    token = request.headers.get('Authorization')
     try :
-        jwt_utils.decode_token(token_received[7:])
+        decode_token(token[7:])
     except TypeError:
-        return {"message" : "Veuillez vous authentifier"} ,401
+        return {"message" : "Not authenticated"}, 401
     except Exception as e:
-        return 'Unauthorized', 401
+        return e.__dict__ , 401
         
     #récupèrer un l'objet json envoyé dans le body de la requète
     questions = request.get_json()
-    return {"questions": questions}, 200
+    return functions.add_question(questions)
 
+@app.route('/questions/<question_id>', methods=['GET'])
+def get_question_by_id(question_id):
+    return functions.get_id(question_id)
+
+@app.route('/questions', methods=['GET'])
+def get_question_by_position():
+    position = request.args.get("position")
+    if position :
+        return functions.get_pos(position)
+    return {"message" : "Pas de position"}, 404
 
 if __name__ == "__main__":
     app.run()
