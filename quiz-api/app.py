@@ -52,5 +52,9 @@ def get_question_by_position():
         return functions.get_pos(position)
     return {"message" : "Pas de position"}, 404
 
+@app.route('/count',methods=['GET'])
+def number_of_question():
+    return {"nb_question" : functions.count()},200
+
 if __name__ == "__main__":
     app.run()

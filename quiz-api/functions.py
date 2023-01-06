@@ -39,7 +39,6 @@ def count():
     nb = count.fetchone()[0]
     return nb
 
-
 def add_question(questions):
     db = init_db() 
     cur = db.cursor()
