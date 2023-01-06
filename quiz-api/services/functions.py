@@ -129,7 +129,7 @@ def update_question(new_question,id):
     new_question["possibleAnswers"] = possible_answers
     input_question.deserialize(new_question)
     question_json, status = get_id(int(id),True)
-    if status == 200 :
+    if status == 200:
         if int(input_question.position) < question_json["position"] :
             cur.execute(f"UPDATE Question SET position = -1 "
                         f"WHERE id = {int(id)!r}")
@@ -159,3 +159,84 @@ def update_question(new_question,id):
     db.close()
 
     return question_json, 204
+
+def get_quiz_info():
+    db = init_db()
+    cur = db.cursor()
+    cur.execute("begin")
+
+    part_details = []
+
+    try : 
+        count = cur.execute(f"SELECT COUNT(*) FROM Question")
+        total = count.fetchone()[0]
+    except sqlite3.Error as e:
+        print(f'An error occurred: {e}')
+    try:
+        part_info = cur.execute(f"SELECT playerName, score, date FROM Participant ORDER BY score DESC LIMIT 10")
+    except sqlite3.Error as e:
+        print(f'An error occurred: {e}')
+
+    for participation in part_info :
+        part_details.append({"playerName": participation[0], "score": participation[1], "date": participation[2]})
+    
+    cur.close()
+    db.close()
+    return {"size": total, "scores": part_details}, 200
+
+def add_participant(player):
+    quiz_info = get_quiz_info()
+    if quiz_info[1] != 200:
+        return {"error": "Impossible de récupérer les informations du quiz"}, 500  
+    total = quiz_info[0]["size"]
+    playerName = player['playerName']
+    if len(player['answers']) < total :
+        return {"error": "Reponse manquante"}, 400
+    if len(player['answers']) > total :
+        return {"error": "Trop de reponse"}, 400
+    score = 0
+    l_a = []
+
+    for index, answer_chosen in enumerate(player["answers"]) :
+        question,status = get_pos(index+1)
+        if status!= 200 :
+            return {"error": "Erreur question"},500
+        possibleAnswers = question["possibleAnswers"]
+        for idx, answer_choice in enumerate(possibleAnswers) :
+            if answer_choice['isCorrect'] == True :
+                correct_text = answer_choice['text']
+                isCorrect = False
+                if idx == int(answer_chosen)-1 :
+                    score += 1
+                    isCorrect = True
+                l_a.append((question['text'],possibleAnswers[answer_chosen-1]['text'],isCorrect,correct_text))
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    participant_query = f"({str(playerName)!r},{int(score)!r},{str(now)!r}),"
+
+    db = init_db()
+    cur = db.cursor()
+    cur.execute("begin") 
+    try:
+        cur.execute(f"INSERT INTO Participant (playerName, score, date) values {participant_query[:-1]}")
+    except sqlite3.Error as e:
+        print(f'An error occurred: {e}')
+    cur.execute('commit')
+    cur.close()
+    db.close()
+
+    return {"l_a": l_a,"score": score, "playerName": playerName, "date_attempt": now}, 200
+
+def delete_all_part():
+    db = init_db()
+    cur = db.cursor()
+    cur.execute("begin")
+
+    try:
+        cur.execute(f"DELETE FROM Participation")
+    except sqlite3.Error as e:
+        print(f'An error occurred: {e}')
+
+    cur.execute('commit')
+    cur.close()
+    db.close()
+    return {}, 204

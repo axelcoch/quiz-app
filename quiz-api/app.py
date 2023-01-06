@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 from services.jwt_utils import build_token, decode_token
 import services.functions as functions
+import services.connection as connection
 
 app = Flask(__name__)
 CORS(app)
@@ -14,7 +15,7 @@ def hello_world():
 
 @app.route('/quiz-info', methods=['GET'])
 def GetQuizInfo():
-	return {"size": 0, "scores": []}, 200
+	return functions.get_quiz_info()
 
 @app.route('/login', methods=['POST'])
 def GetPassword():
@@ -53,7 +54,7 @@ def get_question_by_position():
     return {"message" : "Aucune position"}, 404
 
 @app.route('/count',methods=['GET'])
-def number_of_question():
+def count_question():
     return {"nb_question" : functions.count()}, 200
 
 @app.route('/questions/all', methods=['DELETE'])
@@ -92,6 +93,27 @@ def update_question(question_id):
         return e.__dict__ , 401
     questions = request.get_json()
     return functions.update_question(questions, question_id)
+
+@app.route('/participations',methods=['POST'])
+def add_participant():
+    answers = request.get_json()
+    return functions.add_participant(answers)
+
+@app.route('/participations/all', methods=['DELETE'])
+def deleteAllPart():
+    # Récupérer le token envoyé en paramètre
+    token = request.headers.get('Authorization')
+    try :
+        decode_token(token[7:])
+    except TypeError:
+        return {"message" : "Not authenticated"}, 401
+    except Exception as e:
+        return e.__dict__ , 401
+    return functions.delete_all_part()
+
+@app.route('/rebuild-db', methods=['POST'])
+def dbBuild():
+    return connection.build_db()
 
 if __name__ == "__main__":
     app.run()
