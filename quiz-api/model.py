@@ -1,6 +1,47 @@
+class Answer():
+    """
+	model des Reponses
+	"""
+    def init(self,text:str,isCorrect:bool,id=None) :
 
-# Exemple de création de classe en python
+        self.text = text
+        self.isCorrect = isCorrect
+        self.id_question = None
+        self.id=None
+
+    def convert_to_json(self,idAnswer=False):
+        reponse_json = dict()
+        for key, value in self.__dict__.items():
+            if value is not None and not key =="id" :
+                reponse_json[key] = value
+        if idAnswer :
+            reponse_json["id"] = self.id
+        return reponse_json
+
+    def convert_from_json(self,reponse_json):
+        for k,v in reponse_json.items() :
+            setattr(self,k,v)
+
 class Question():
-	def init(self, title: str, text: str, position: int):
-		self.title = title,
-        self.text = text,
+	"""
+	model des Questions
+	"""
+    def init(self, id: int, title: str, text: str, position: int, image: str, possibleAnswers=list[Answer]):
+        self.id = id
+        self.title = title
+        self.text = text
+        self.position = position
+        self.image = image
+        self.possibleAnswers = possibleAnswers
+
+    def convert_to_json(self,idAnswer=False):
+        question_json = dict()
+        for key, value in self.__dict__.items():
+            if value is not None and not key == "possibleAnswers":
+                question_json[key] = value
+        question_json["possibleAnswers"] = [answer.to_json(idAnswer) for answer in self.possibleAnswers]
+        return question_json
+
+    def convert_from_json(self,question_json):
+        for k,v in question_json.items() :
+            setattr(self,k,v)

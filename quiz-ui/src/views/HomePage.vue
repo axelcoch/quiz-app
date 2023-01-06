@@ -15,8 +15,7 @@ export default {
   async created() {
 		console.log("Composant Home page 'created'")
     var quizInfoApiResult = await quizApiService.getQuizInfo()
-    this.registredScores.push(quizInfoApiResult.data.scores)
-
+    this.registredScores = quizInfoApiResult.data.scores
   }
 };
 </script>

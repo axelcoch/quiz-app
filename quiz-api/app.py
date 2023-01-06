@@ -28,15 +28,19 @@ def GetPassword():
 
 @app.route('/questions', methods=['POST'])
 def AddQuestions():
-    try:
-        #Récupérer le token envoyé en paramètre
-        request.headers.get('Authorization')
-        #récupèrer un l'objet json envoyé dans le body de la requète
-        questions = request.get_json()
-        return {"questions": questions}, 200
-
-    except Exception:
+    #Récupérer le token envoyé en paramètre
+    request.headers.get('Authorization')
+    try :
+        jwt_utils.decode_token(token_received[7:])
+    except TypeError:
+        return {"message" : "Veuillez vous authentifier"} ,401
+    except Exception as e:
         return 'Unauthorized', 401
+        
+    #récupèrer un l'objet json envoyé dans le body de la requète
+    questions = request.get_json()
+    return {"questions": questions}, 200
+
 
 if __name__ == "__main__":
     app.run()
