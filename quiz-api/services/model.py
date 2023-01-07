@@ -14,7 +14,7 @@ class Answer():
             reponse_json["id"] = self.id
         return reponse_json
 
-    def deserialize(self,reponse_json):
+    def deserialize(self, reponse_json):
         for k,v in reponse_json.items() :
             setattr(self,k,v)
 

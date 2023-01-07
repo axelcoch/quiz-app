@@ -7,28 +7,26 @@ def select_question(query, answer_id = False):
     db = init_db()
     selection = db.execute(query)
 
-    for id, position, title, text, image, answers in selection :
-        l_a = answers.split("nnn")
+    for id, title, text, position, image, answers in selection :
+        l_a = answers.split("|")
         possible_answers = [Answer() for i in l_a]
 
-        for i,t_a in enumerate(l_a) :
+        for i, t_a in enumerate(l_a) :
             t_a = t_a.split("/")
             d_a = {"id": t_a[0], "text": t_a[1], "isCorrect": True if t_a[2] == '1' else False}
             possible_answers[i].deserialize(d_a)
         question = Question()
-        question.init(id,position,title,text,image,possible_answers)
+        question.init(id, title, text, position, image, possible_answers)
         db.close()
         return question.serialize(answer_id), 200
     return {"message": "Aucune question correspondante"}, 404
     
-def get_id(id,answer_id=False):
-    return select_question(f"SELECT Question.*, group_concat(Reponse.id||'/'||Reponse.text||'/'||Reponse.isCorrect,'nnn') as possibleAnswers "
-                            f"FROM Reponse LEFT JOIN Question on Question.id = Reponse.id where Question.id = {id} GROUP BY Question.id",
+def get_id(id, answer_id = False):
+    return select_question(f"SELECT Question.*, group_concat(Reponse.id||'/'||Reponse.text||'/'||Reponse.isCorrect,'|') as possibleAnswers FROM Reponse LEFT JOIN Question on Question.id = Reponse.id_question where Question.id = {id} GROUP BY Question.id",
                             answer_id)
 
-def get_pos(position,answer_id=False):
-    return select_question(f"SELECT Question.*, group_concat(Reponse.id||'/'||Reponse.text||'/'||Reponse.isCorrect,'nnn') as possibleAnswers "
-                            f"FROM Reponse LEFT JOIN Question on Question.id = Reponse.id where position = {position} GROUP BY Question.id",
+def get_pos(position, answer_id = False):
+    return select_question(f"SELECT Question.*, group_concat(Reponse.id||'/'||Reponse.text||'/'||Reponse.isCorrect,'|') as possibleAnswers FROM Reponse LEFT JOIN Question on Question.id = Reponse.id_question where position = {position} GROUP BY Question.id",
                             answer_id)
 
 def count():
@@ -115,7 +113,7 @@ def delete_id(id):
 
     return question, 204
 
-def update_question(new_question,id):
+def update_question(new_question, id):
     db = init_db()
     cur = db.cursor()
     cur.execute("begin")
@@ -186,32 +184,37 @@ def get_quiz_info():
 
 def add_participant(player):
     quiz_info = get_quiz_info()
+    score = 0
+    total = quiz_info[0]["size"]
+
     if quiz_info[1] != 200:
         return {"error": "Impossible de récupérer les informations du quiz"}, 500  
-    total = quiz_info[0]["size"]
-    playerName = player['playerName']
     if len(player['answers']) < total :
         return {"error": "Reponse manquante"}, 400
     if len(player['answers']) > total :
         return {"error": "Trop de reponse"}, 400
-    score = 0
+   
     l_a = []
-
-    for index, answer_chosen in enumerate(player["answers"]) :
-        question,status = get_pos(index+1)
+    for index, answer_chosen in enumerate(player["answers"]):
+        question, status = get_pos(index + 1)
         if status!= 200 :
-            return {"error": "Erreur question"},500
+            return {"error": "Erreur question"}, 500
+
         possibleAnswers = question["possibleAnswers"]
-        for idx, answer_choice in enumerate(possibleAnswers) :
-            if answer_choice['isCorrect'] == True :
-                correct_text = answer_choice['text']
+
+        for idx, correct in enumerate(possibleAnswers):
+            if correct['isCorrect'] == True:
+                correct_text = correct['text']
                 isCorrect = False
-                if idx == int(answer_chosen)-1 :
+                
+                if idx == answer_chosen-1:
                     score += 1
+                    answer_chosen -= 1
                     isCorrect = True
-                l_a.append((question['text'],possibleAnswers[answer_chosen-1]['text'],isCorrect,correct_text))
+                l_a.append((question['text'], possibleAnswers[answer_chosen]['text'], isCorrect, correct_text))
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    participant_query = f"({str(playerName)!r},{int(score)!r},{str(now)!r}),"
+    
+    participant_query = f"({str(player['playerName'])!r}, {int(score)!r}, {str(now)!r}),"
 
     db = init_db()
     cur = db.cursor()
@@ -223,8 +226,7 @@ def add_participant(player):
     cur.execute('commit')
     cur.close()
     db.close()
-
-    return {"l_a": l_a,"score": score, "playerName": playerName, "date_attempt": now}, 200
+    return {"l_a": l_a, "score": score, "playerName": player['playerName'], "date_attempt": now}, 200
 
 def delete_all_part():
     db = init_db()
