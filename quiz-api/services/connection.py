@@ -51,4 +51,4 @@ def build_db():
     cur.execute("commit")
     cur.close()
     db.close()
-    return "DB Built",200
+    return "Ok", 200

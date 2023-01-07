@@ -8,6 +8,16 @@ import services.connection as connection
 app = Flask(__name__)
 CORS(app)
 
+def getToken():
+    #Récupérer le token envoyé en paramètre
+    token = request.headers.get('Authorization')
+    try :
+        decode_token(token[7:])
+    except TypeError:
+        return {"message" : "Not authenticated"}, 401
+    except Exception as e:
+        return e.__dict__ , 401
+
 @app.route('/')
 def hello_world():
 	x = 'world'
@@ -29,15 +39,7 @@ def GetPassword():
 
 @app.route('/questions', methods=['POST'])
 def AddQuestions():
-    #Récupérer le token envoyé en paramètre
-    token = request.headers.get('Authorization')
-    try :
-        decode_token(token[7:])
-    except TypeError:
-        return {"message" : "Not authenticated"}, 401
-    except Exception as e:
-        return e.__dict__ , 401
-        
+    getToken()
     #récupèrer un l'objet json envoyé dans le body de la requète
     questions = request.get_json()
     return functions.add_question(questions)
@@ -59,38 +61,17 @@ def count_question():
 
 @app.route('/questions/all', methods=['DELETE'])
 def delete_all():
-    # Récupérer le token envoyé en paramètre
-    token = request.headers.get('Authorization')
-    try :
-        decode_token(token[7:])
-    except TypeError:
-        return {"message" : "Not authenticated"}, 401
-    except Exception as e:
-        return e.__dict__, 401
+    getToken()
     return functions.delete_all()
 
 @app.route('/questions/<question_id>', methods=['DELETE'])
 def delete_by_id(question_id):
-    # Récupérer le token envoyé en paramètre
-    token = request.headers.get('Authorization')
-    try :
-        decode_token(token[7:])
-    except TypeError:
-        return {"message" : "Not authenticated"}, 401
-    except Exception as e:
-        return e.__dict__ ,401
+    getToken()
     return functions.delete_id(question_id)
 
 @app.route('/questions/<question_id>', methods=['PUT'])
 def update_question(question_id):
-    # Récupérer le token envoyé en paramètre
-    token = request.headers.get('Authorization')
-    try :
-        decode_token(token[7:])
-    except TypeError:
-        return {"message" : "Not authenticated"}, 401
-    except Exception as e:
-        return e.__dict__ , 401
+    getToken()
     questions = request.get_json()
     return functions.update_question(questions, question_id)
 
@@ -101,14 +82,7 @@ def add_participant():
 
 @app.route('/participations/all', methods=['DELETE'])
 def deleteAllPart():
-    # Récupérer le token envoyé en paramètre
-    token = request.headers.get('Authorization')
-    try :
-        decode_token(token[7:])
-    except TypeError:
-        return {"message" : "Not authenticated"}, 401
-    except Exception as e:
-        return e.__dict__ , 401
+    getToken()
     return functions.delete_all_part()
 
 @app.route('/rebuild-db', methods=['POST'])
