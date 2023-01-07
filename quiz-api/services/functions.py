@@ -60,7 +60,7 @@ def add_question(questions):
             f"WHERE position >= {input_question.position!r}")
 
     insert_question = cur.execute(
-        f"INSERT into Question (position,title,text,image) values"
+        f"INSERT OR IGNORE INTO Question (position,title,text,image) values"
         f"({input_question.position!r},{input_question.title!r},"
         f"{input_question.text!r},{input_question.image!r})"
     )
@@ -71,7 +71,7 @@ def add_question(questions):
        insert_reponse += f"({insert_question.lastrowid!r},{answer.text!r},{answer.isCorrect!r}),"
 
     cur.execute(
-        f"INSERT into Reponse (id,text,isCorrect) values"
+        f"INSERT OR IGNORE INTO Reponse (id,text,isCorrect) values"
         f"{insert_reponse[:-1]}"
     )
 
@@ -151,7 +151,7 @@ def update_question(new_question,id):
     insert_reponse = ""
     for answer in possible_answers :
         insert_reponse += f"({question_json['id']!r},{answer.text!r},{answer.isCorrect!r}),"
-    cur.execute(f"INSERT into Reponse (id, text, isCorrect) values"
+    cur.execute(f"INSERT OR IGNORE INTO Reponse (id, text, isCorrect) values"
                 f"{insert_reponse[:-1]}")
 
     cur.execute('commit')
@@ -217,7 +217,7 @@ def add_participant(player):
     cur = db.cursor()
     cur.execute("begin") 
     try:
-        cur.execute(f"INSERT INTO Participant (playerName, score, date) values {participant_query[:-1]}")
+        cur.execute(f"INSERT OR IGNORE INTO Participant (playerName, score, date) values {participant_query[:-1]}")
     except sqlite3.Error as e:
         print(f'An error occurred: {e}')
     cur.execute('commit')
@@ -232,7 +232,7 @@ def delete_all_part():
     cur.execute("begin")
 
     try:
-        cur.execute(f"DELETE FROM Participation")
+        cur.execute(f"DELETE FROM Participant")
     except sqlite3.Error as e:
         print(f'An error occurred: {e}')
 
