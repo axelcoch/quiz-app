@@ -119,7 +119,7 @@ def update_question(new_question, id):
     cur.execute("begin")
 
     input_question = Question()
-    possible_answers = [Answer() for answer in new_question["possibleAnswers"]]
+    possible_answers = [Answer() for i in new_question["possibleAnswers"]]
 
     for i,answer_json in enumerate(new_question["possibleAnswers"]) :
         possible_answers[i].deserialize(answer_json.copy())
@@ -129,15 +129,11 @@ def update_question(new_question, id):
     question_json, status = get_id(int(id),True)
     if status == 200:
         if int(input_question.position) < question_json["position"] :
-            cur.execute(f"UPDATE Question SET position = -1 "
-                        f"WHERE id = {int(id)!r}")
-            cur.execute(f"UPDATE Question SET position = position + 1 "
-                        f"WHERE position >= {input_question.position!r} and position < {question_json['position']!r}")
+            cur.execute(f"UPDATE Question SET position = -1 WHERE id = {int(id)!r}")
+            cur.execute(f"UPDATE Question SET position = position + 1 WHERE position >= {input_question.position!r} and position < {question_json['position']!r}")
         elif int(input_question.position) > question_json["position"]:
-            cur.execute(f"UPDATE Question SET position = -1 "
-                        f"WHERE id = {question_json['id']!r}")
-            cur.execute(f"UPDATE Question SET position = position - 1 "
-                        f"WHERE position <= {input_question.position!r} and position > {question_json['position']!r}")
+            cur.execute(f"UPDATE Question SET position = -1 WHERE id = {question_json['id']!r}")
+            cur.execute(f"UPDATE Question SET position = position - 1 WHERE position <= {input_question.position!r} and position > {question_json['position']!r}")
     else:
         return {"message":"Question non trouvée"},404
     cur.execute(f"UPDATE Question SET position = {input_question.position!r},"

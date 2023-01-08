@@ -1,0 +1,683 @@
+{
+	"info": {
+		"_postman_id": "9b25da2f-a19f-442a-96ad-8e5ca86531e9",
+		"name": "Anime_collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24906149"
+	},
+	"item": [
+		{
+			"name": "Rebuild db",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.body(\"Ok\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/rebuild-db",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"rebuild-db"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login good password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Good Password \", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Request respond json\", function () {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody();\r",
+							"    pm.response.to.not.have.jsonBody(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"access token is provided\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"token\")\r",
+							"});\r",
+							"\r",
+							"//A activer une fois l'authen mise en place car sinon fait beugguer\r",
+							"pm.environment.set(\"access_token\",pm.response.json().token);\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\": \"flask2023\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete all questions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/questions/all",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"questions",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete all participations",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok deleted\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/participations/all",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"participations",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get quiz info - Ensure empty",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Request respond json\", function () {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody();\r",
+							"    pm.response.to.not.have.jsonBody(\"error\");\r",
+							"});\r",
+							"\r",
+							"info = pm.response.json()\r",
+							"\r",
+							"pm.test(\"Check infos\", function () {\r",
+							"    pm.expect(info.size).to.equal(0);\r",
+							"    pm.expect(info.scores.length).to.equal(0);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/quiz-info",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"quiz-info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add question - 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Who is the father of Luffy ?\",\r\n    \"title\": \"One Piece 1\",\r\n    \"image\": \"falseb64imagecontent\",\r\n    \"position\": 1,\r\n    \"possibleAnswers\": [\r\n        {\r\n            \"text\": \"Monkey D. Garp\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Sengoku\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Monkey D. Dragon\", \r\n            \"isCorrect\": true\r\n        },\r\n        {\r\n            \"text\": \"Crocodile\", \r\n            \"isCorrect\": false\r\n        }\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/questions",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"questions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add question - 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Who is the black bull captain ?\",\r\n    \"title\": \"Black Clover\",\r\n    \"image\": \"falseb64imagecontent\",\r\n    \"position\": 2,\r\n    \"possibleAnswers\": [\r\n        {\r\n            \"text\": \"Yami\", \r\n            \"isCorrect\": true\r\n        },\r\n        {\r\n            \"text\": \"Yuno\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Asta\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"William Vengeance\", \r\n            \"isCorrect\": false\r\n        }\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/questions",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"questions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add question - 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Where is the One Piece ?\",\r\n    \"title\": \"One Piece 2\",\r\n    \"image\": \"falseb64imagecontent\",\r\n    \"position\": 3,\r\n    \"possibleAnswers\": [\r\n        {\r\n            \"text\": \"Enies Lobby\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Laugh tale\", \r\n            \"isCorrect\": true\r\n        },\r\n        {\r\n            \"text\": \"La Ruche\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Alabasta\", \r\n            \"isCorrect\": false\r\n        }\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/questions",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"questions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add question - 4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Who is the demon inside Itadori's body ?\",\r\n    \"title\": \"Jujutsu kaisen\",\r\n    \"image\": \"falseb64imagecontent\",\r\n    \"position\": 4,\r\n    \"possibleAnswers\": [\r\n        {\r\n            \"text\": \"Megumi\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Sukuna\", \r\n            \"isCorrect\": true\r\n        },\r\n        {\r\n            \"text\": \"Gojo\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Todo\", \r\n            \"isCorrect\": false\r\n        }\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/questions",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"questions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add question - 5",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Who is the first opponent of Saitama who resist at 1 of his punch ?\",\r\n    \"title\": \"One punch man\",\r\n    \"image\": \"falseb64imagecontent\",\r\n    \"position\": 5,\r\n    \"possibleAnswers\": [\r\n        {\r\n            \"text\": \"Garou\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"king\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Garoh\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Boros\", \r\n            \"isCorrect\": true\r\n        }\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/questions",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"questions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add question - 6",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Who is the first Hokage ?\",\r\n    \"title\": \"Naruto\",\r\n    \"image\": \"falseb64imagecontent\",\r\n    \"position\": 6,\r\n    \"possibleAnswers\": [\r\n        {\r\n            \"text\": \"Naruto\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Tsunade\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Minato\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Hashirama\", \r\n            \"isCorrect\": true\r\n        }\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/questions",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"questions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add question - 7",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"What is the name of Ichigo's father ?\",\r\n    \"title\": \"Bleach\",\r\n    \"image\": \"falseb64imagecontent\",\r\n    \"position\": 7,\r\n    \"possibleAnswers\": [\r\n        {\r\n            \"text\": \"Sosuke\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Hurahara\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Ryuken\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Ishin\", \r\n            \"isCorrect\": true\r\n        }\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/questions",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"questions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add question - 8",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Who is Sogeking ?\",\r\n    \"title\": \"One piece 3\",\r\n    \"image\": \"falseb64imagecontent\",\r\n    \"position\": 8,\r\n    \"possibleAnswers\": [\r\n        {\r\n            \"text\": \"Usopp\", \r\n            \"isCorrect\": true\r\n        },\r\n        {\r\n            \"text\": \"Luffy\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Zoro\", \r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"text\": \"Itachi\", \r\n            \"isCorrect\": false\r\n        }\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/questions",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"questions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get quiz info - Ensure 8 questions Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request respond ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Request respond json\", function () {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody();\r",
+							"    pm.response.to.not.have.jsonBody(\"error\");\r",
+							"});\r",
+							"\r",
+							"info = pm.response.json()\r",
+							"\r",
+							"pm.test(\"Check infos\", function () {\r",
+							"    pm.expect(info.size).to.equal(8);\r",
+							"    pm.expect(info.scores.length).to.equal(0);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/quiz-info",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"quiz-info"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
