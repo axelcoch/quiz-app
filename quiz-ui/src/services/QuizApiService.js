@@ -31,6 +31,30 @@ export default {
     return this.call("get", "quiz-info");
   },
   getQuestion(position) {
-    // not implemented
+    return this.call("get", "questions?position=" + position);
+  },
+  getNumberOfQuestion() {
+    return this.call("get", "nb_question");
+  },
+  login(password) {
+    return this.call("post", "login", { password: password });
+  },
+  postQuestion(question, token) {
+    return this.call("post", "questions", question, token);
+  },
+  postParticipation(player_answers) {
+    return this.call("post", "participations", player_answers);
+  },
+  updateQuestion(question_id, question, token) {
+    return this.call("put", "questions/" + question_id, question, token);
+  },
+  deleteQuestion(question_id, token) {
+    return this.call("delete", "questions/" + question_id, null, token);
+  },
+  deleteAllQuestions(token) {
+    return this.call("delete", "questions/all", null, token);
+  },
+  deleteAllParticipations(token) {
+    return this.call("delete", "participations/all", null, token);
   }
 };
