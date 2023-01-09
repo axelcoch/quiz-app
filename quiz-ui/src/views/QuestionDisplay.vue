@@ -9,9 +9,9 @@
         {{answer.text}}
       </a> 
     </div>
-
   </div>
 </template>
+
 <script>
 export default {
   name: "QuestionDisplay",

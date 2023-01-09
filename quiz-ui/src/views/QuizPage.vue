@@ -1,8 +1,5 @@
 <template>
     <div>
-    
-
-
     <p>Saisissez votre nom :</p>
     <div class="form-floating ">
         <input
@@ -12,19 +9,18 @@
             id="name"
             name="name"
             placeholder="Username"
-        />
+        >
         <label class="text-dark" for="name">Username</label>
+        <br/>
+        <button class="text-center btn btn-light" type="button" @click="launchNewQuiz">GO!</button>
+ 
     </div>
-    <br/>
-    <button class="text-center btn btn-light" @click="launchNewQuiz">GO!</button>   
     </div>
-
-    
-  
 </template>
   
 <script>
   import participationStorageService from "@/services/ParticipationStorageService";
+  import quizApiService from "@/services/QuizApiService";
   
   export default {
     name: "QuizPage",
@@ -32,6 +28,11 @@
       return {
         username: "",
       };
+    },
+    async created() {
+	    let quizInfoPromise = quizApiService.getQuizInfo();
+	    let quizInfoApiResult = await quizInfoPromise;
+        this.numberQuestion = quizInfoApiResult.data.size;
     },
     methods: {
         buttonClickHandler() {
