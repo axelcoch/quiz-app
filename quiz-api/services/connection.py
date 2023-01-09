@@ -16,6 +16,19 @@ def build_db():
     cur.execute("begin")
     try:
         cur.execute(
+            """IF EXISTS(SELECT * FROM Question)
+            DROP TABLE Question;
+            """
+        )
+        cur.execute(
+            """IF EXISTS(SELECT * FROM Reponse)
+            DROP TABLE Reponse;"""
+        )
+        cur.execute(
+            """IF EXISTS(SELECT * FROM Participant)
+            DROP TABLE Participant;"""
+        )
+        cur.execute(
 
             """CREATE TABLE "Question" (
                 "id"	INTEGER,

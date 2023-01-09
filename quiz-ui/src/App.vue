@@ -13,10 +13,10 @@ import Headers from "./views/Header.vue";
       </nav>
     </div>
   </header> -->
-  <div>
-  <Headers />
-  <RouterView />
-</div>
+  <div class="container-fluid p-0">
+    <Headers />
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>

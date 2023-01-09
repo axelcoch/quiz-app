@@ -4,8 +4,8 @@
     <h5>{{ question.title }}</h5>
     <img v-if="question.image" :src="question.image"/>
 
-    <div class="d-flex flex-column justify-content-center my-5">
-      <a class=" col mx-8 d-flex align-items-center text-center text-white bg-dark" style="font-size: 1.2em;" v-for="(answer, index) in question.possibleAnswers" @click="$emit('answer-selected', index)">
+    <div class="d-flex flex-column justify-content-center text-center my-5 w-50 p-3" style="background-color: #eee;">
+      <a class=" col mx-8 text-center text-dark h-25" style="font-size: 1.2em;" v-for="(answer, index) in question.possibleAnswers" @click="$emit('answer-selected', index)">
         {{answer.text}}
       </a> 
     </div>
