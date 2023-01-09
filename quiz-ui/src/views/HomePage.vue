@@ -9,7 +9,6 @@
         <router-link to="/start-new-quiz-page">Démarrer le quiz !</router-link>
       </button>
   </div>
-  
 
 </template>
 

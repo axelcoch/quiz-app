@@ -10,10 +10,10 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item active">
-              <RouterLink class="nav-link"  to="/">Home</RouterLink>
+              <RouterLink class="nav-link" to="/">Home</RouterLink>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Admin</a>
+              <RouterLink class="nav-link" to="/start-new-quiz-page">QuizPage</RouterLink>
             </li>
           </ul>
         </div>
