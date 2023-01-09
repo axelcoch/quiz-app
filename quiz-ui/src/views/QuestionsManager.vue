@@ -1,9 +1,12 @@
 <template>
     <h1>Question {{ currentQuestionPosition }} / {{ totalNumberOfQuestion }}</h1>
     <QuestionDisplay :question="currentQuestion" @answer-selected="answerClickedHandler" />
+    <br/>
+    <ScorePage/>
 </template>
 
 <script>
+import ScorePage from "./ScorePage.vue";
 import QuestionDisplay from "./QuestionDisplay.vue";
 import participationStorageService from "@/services/ParticipationStorageService";
 import quizApiService from "@/services/QuizApiService";
@@ -19,7 +22,8 @@ export default {
       };
     },
     components: {
-      QuestionDisplay
+      QuestionDisplay,
+      ScorePage
     },
 
     async created() {
