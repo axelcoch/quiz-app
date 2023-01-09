@@ -12,7 +12,7 @@
         >
         <label class="text-dark" for="name">Username</label>
         <br/>
-        <button class="text-center btn btn-light" type="button" @click="launchNewQuiz">GO!</button>
+        <button class="text-center btn btn-light" type="button" @click="launchNewQuiz()">GO!</button>
  
     </div>
     </div>
@@ -38,12 +38,13 @@
         buttonClickHandler() {
             this.username = this.data.username;
         },
-    },
-    launchNewQuiz() {
-        participationStorageService.savePlayerName(this.username.toString());
-        const playerName = participationStorageService.getPlayerName();
-        console.log("Launch new quiz with " + playerName);
-        this.$router.push("/questions");
-    },
+    
+        launchNewQuiz() {
+            participationStorageService.savePlayerName(this.username.toString());
+            const playerName = participationStorageService.getPlayerName();
+            console.log("Launch new quiz with " + playerName);
+            this.$router.push("/questions");
+        }
+  },
   };
   </script>
