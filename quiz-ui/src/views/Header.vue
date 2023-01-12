@@ -22,7 +22,7 @@
       </div>
     </nav>
     </template>
-    <script>
+  <script>
     
     export default {
       name: "Header",
@@ -32,4 +32,4 @@
     
       async created() {},
     };
-    </script>
+  </script>

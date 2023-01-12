@@ -1,5 +1,5 @@
 <template>
-  <div class="quizstart">
+
   <div class="col text-center">
   <h1 style="color: white">QuizAnime</h1>
   <div v-for="scoreEntry in registeredScores" v-bind:key="scoreEntry.date">
@@ -10,7 +10,7 @@
         <router-link to="/start-new-quiz-page">Démarrer le quiz !</router-link>
       </button>
   </div>
-  </div>
+
 
 </template>
 

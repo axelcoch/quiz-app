@@ -1,8 +1,10 @@
 <template>
+  <div class="Background">
     <h1 style="color: white">Question {{ currentQuestionPosition }} / {{ totalNumberOfQuestion }}</h1>
     <QuestionDisplay :question="currentQuestion" @answer-selected="answerClickedHandler" />
     <br/>
     <ScorePage/>
+  </div>
 </template>
 
 <script>

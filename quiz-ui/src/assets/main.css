@@ -11,13 +11,13 @@
 a,
 .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: rgb(73, 73, 89);
   transition: 0.4s;
 }
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+    background-color: hsla(203, 15%, 28%, 0.2);
   }
 }
 
@@ -90,8 +90,8 @@ a,
 
 .centered-element{
   background-image: url("japon2.png");
+  opacity: 0.95;
   width: 1000px;
-  opacity: 1;
   background-repeat: repeat;
   padding: 20px;
   border-radius: 25px;
@@ -126,6 +126,12 @@ a,
   padding: 50px;
   margin-top: 20px;
   margin-left: 400px;
+}
+
+.Background{
+  background-color: rgba(105, 105, 105, .35);
+  border-radius: 25px;
+  padding: 50px;
 }
 
 body{

@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="text-center fs-4">
     <p style="color: white">Saisissez votre nom dans l'encadré noir juste en dessous:</p>
-    <div class="form-floating ">
+    <div class="form-floating mx-auto">
         <input
             type="text"
             class="form-control"
