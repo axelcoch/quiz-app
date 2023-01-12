@@ -1,6 +1,6 @@
 <template>
     <div>
-    <p>Saisissez votre nom :</p>
+    <p style="color: white">Saisissez votre nom dans l'encadré noir juste en dessous:</p>
     <div class="form-floating ">
         <input
             type="text"
@@ -10,7 +10,7 @@
             name="name"
             placeholder="Username"
         >
-        <label class="text-dark" for="name">Username</label>
+        <label style="color: white" class="text-dark" for="name" ></label>
         <br/>
         <button class="text-center btn btn-light" type="button" @click="launchNewQuiz()">GO!</button>
  
@@ -47,4 +47,4 @@
         }
   },
   };
-  </script>
+</script>

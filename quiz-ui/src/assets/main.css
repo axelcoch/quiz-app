@@ -28,8 +28,108 @@ a,
   }
 
   #app {
+    border: 10px ridge rgba(210, 0, 0, 0);
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    grid-template-columns: 0.001fr 10fr;
+    padding: 20px;
+    border-radius: 25px;
+    margin-top: 20px;
   }
+}
+
+.conatainer {
+
+  width: 150em;
+  border: 10px solid rgb(93, 136, 129);
+  box-shadow: 8px 8px 5px rgb(6, 206, 56);
+  padding: 8px 12px;
+  background-image: linear-gradient(180deg, #fff, #ddd 40%, #ccc);
+
+}
+
+
+
+.container {
+  margin-left: 250px;
+  margin-right: 200px;
+  width: 1200px;
+  height: 300px;
+  border: 10px rgba(23, 0, 171, 0) solid;
+  
+}
+
+.score {
+  margin-left: center;
+  margin-right: center;
+  background-color: rgba(0, 0, 0, 0);
+  padding: 15px;
+  width: 700px;
+}
+
+.centered-element{
+  width: 80%;
+  margin-left: auto;
+  background-color: #5c3b00;
+  border-radius: 25px;
+  padding: 50px;
+  box-shadow: 5px 5px 10px #888888;
+}
+
+.centered-element h2 {
+  text-align: center;
+  color: white;
+  text-shadow: 2px 2px #333333;
+  margin-bottom: 20px;
+}
+
+.centered-element p {
+  color: white;
+  text-shadow: 2px 2px #333333;
+  font-size: 1.2em;
+  line-height: 1.5em;
+}
+
+.centered-element{
+  background-image: url("japon2.png");
+  width: 1000px;
+  opacity: 1;
+  background-repeat: repeat;
+  padding: 20px;
+  border-radius: 25px;
+  margin-top: 20px;
+}
+
+.nav-link{
+  text-align: center;
+  color: white;
+  text-shadow: 2px 2px #333333;
+  margin-bottom: 20px;
+}
+
+.form-floating{
+  text-align: center;
+  color: rgb(42, 15, 15);
+  margin-bottom: auto;
+  border: 5px solid rgb(0, 0, 0);
+  height: 200px;
+  width: 500px;
+  padding: 50px;
+  border-radius: 25px;
+  margin-top: 20px;
+}
+
+.col.text-center{
+  text-align: center;
+  color: rgb(255, 0, 0);
+  margin-bottom: auto;
+  height: 200px;
+  width: 500px;
+  padding: 50px;
+  margin-top: 20px;
+  margin-left: 400px;
+}
+
+body{
+  background-image: url("japon7.jpg");
+  background-repeat:no-repeat;
 }

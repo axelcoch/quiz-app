@@ -1,7 +1,8 @@
+
 <template>
 
-    <div>
-        <h1>{{ playerName }} votre score est de : {{score}} / {{totalNumberOfQuestion}}</h1>
+    <div class="score">
+        <h1 style="color: white">{{ playerName }} votre score est de : {{score}} / {{totalNumberOfQuestion}}</h1>
     </div>
     
 </template>
