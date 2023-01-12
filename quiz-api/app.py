@@ -128,7 +128,7 @@ def deleteAllPart():
 
 @app.route('/rebuild-db', methods=['POST'])
 def dbBuild():
-    return connection.build_db()
+    return connection.build_db() 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

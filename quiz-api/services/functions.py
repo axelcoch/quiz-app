@@ -5,20 +5,18 @@ from services.connection import init_db, build_db
 
 def select_question(query, answer_id = False):
     db = init_db()
-    selection = db.execute(query)
+    selection = db.execute(query).fetchone() 
 
-    for id, title, text, position, image, answers in selection :
-        l_a = answers.split("|")
-        possible_answers = [Answer() for i in l_a]
-
-        for i, t_a in enumerate(l_a) :
-            t_a = t_a.split("/")
-            d_a = {"id": t_a[0], "text": t_a[1], "isCorrect": True if t_a[2] == '1' else False}
-            possible_answers[i].deserialize(d_a)
-        question = Question()
-        question.init(id, title, text, position, image, possible_answers)
+    if selection:
+        id, title, text, position, image, answers = selection
+        possible_answers = []
+        for i in answers.split("|"):
+            id_q, text_q, isCorrect = i.split("/")
+            possible_answers.append(Answer(text_q, True if isCorrect=='1' else False, id_q))
+        question = Question(title, text, position, image, possible_answers, id)
         db.close()
         return question.serialize(answer_id), 200
+    db.close()
     return {"message": "Aucune question correspondante"}, 404
     
 def get_id(id, answer_id = False):
@@ -41,42 +39,38 @@ def add_question(questions):
     db = init_db() 
     cur = db.cursor()
     cur.execute("begin")
-
-    input_question = Question()
-    possible_answers = [Answer() for i in questions["possibleAnswers"]]
-
+    input_question = Question(title=questions["title"], text=questions["text"], 
+                              position=questions["position"], image=questions["image"],
+                              possibleAnswers=[Answer(text=ans["text"], isCorrect=ans["isCorrect"]) for ans in questions["possibleAnswers"]])
+    possible_answers = [Answer(text=answer["text"], isCorrect=answer["isCorrect"]) for answer in questions["possibleAnswers"]]
     for i, answer in enumerate(questions["possibleAnswers"]) :
-        possible_answers[i].deserialize(answer.copy())
-
-    questions["possibleAnswers"] = possible_answers
-    input_question.deserialize(questions)
+        possible_answers[i].deserialize(answer)
+    input_question.possibleAnswers = possible_answers
+    input_question.deserialize({key: value for key, value in questions.items() if key != "possibleAnswers"})
     question_position, status = get_pos(input_question.position)
-
     if status == 200 :
         cur.execute(
             f"UPDATE Question SET position = position + 1 "
-            f"WHERE position >= {input_question.position!r}")
-
-    insert_question = cur.execute(
-        f"INSERT OR IGNORE INTO Question (position,title,text,image) values"
-        f"({input_question.position!r},{input_question.title!r},"
-        f"{input_question.text!r},{input_question.image!r})"
-    )
-
-    id = insert_question.lastrowid
-    insert_reponse = ""
-    for answer in possible_answers :
-       insert_reponse += f"({insert_question.lastrowid!r},{answer.text!r},{answer.isCorrect!r}),"
-
-    cur.execute(
-        f"INSERT OR IGNORE INTO Reponse (id,text,isCorrect) values"
-        f"{insert_reponse[:-1]}"
-    )
-
-    cur.execute('commit')
+            f"WHERE position >= ?", (input_question.position,))
+    try:
+        cur.execute(
+            f"INSERT INTO Question (position,title,text,image) values"
+            f"(?,?,?,?)", (input_question.position,input_question.title,
+            input_question.text,input_question.image))
+    except sqlite3.Error as e:
+        # handle the error
+        print(f'An error occurred: {e}')
+    id = cur.lastrowid
+    try:
+        cur.executemany(
+            f"INSERT INTO Reponse (id_question,text,isCorrect) values (?,?,?)", 
+            [(id, ans.text, ans.isCorrect) for ans in input_question.possibleAnswers])
+        cur.execute('commit')
+    except sqlite3.Error as e:
+        # handle the error
+        print(f'An error occurred: {e}')
     cur.close()
     db.close()
-
     return {"id": id}, 200
 
 def delete_all():
@@ -195,9 +189,15 @@ def add_participant(player):
         question, status = get_pos(index + 1)
         if status!= 200 :
             return {"error": "Erreur question"}, 500
-
         possibleAnswers = question["possibleAnswers"]
+        print(answer_chosen)
+        print(len(possibleAnswers))
 
+        if not (0 <= answer_chosen-1 < len(possibleAnswers)):
+            print(answer_chosen)
+            print(len(possibleAnswers))
+            return {"error": "Réponse choisie non valide"}, 400
+            
         for idx, correct in enumerate(possibleAnswers):
             if correct['isCorrect'] == True:
                 correct_text = correct['text']
@@ -207,6 +207,10 @@ def add_participant(player):
                     score += 1
                     answer_chosen -= 1
                     isCorrect = True
+                if not (0 <= answer_chosen-1 < len(possibleAnswers)):
+                    print(answer_chosen)
+                    print(len(possibleAnswers))
+                    return {"error": "Réponse choisie non valide"}, 400
                 l_a.append((question['text'], possibleAnswers[answer_chosen]['text'], isCorrect, correct_text))
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
