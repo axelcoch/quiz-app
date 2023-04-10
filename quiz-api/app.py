@@ -8,16 +8,6 @@ import services.connection as connection
 app = Flask(__name__)
 CORS(app)
 
-# def getToken():
-#     #Récupérer le token envoyé en paramètre
-#     token = request.headers.get('Authorization')
-#     try :
-#         decode_token(token[7:])
-#     except TypeError:
-#         return {"message" : "Not authenticated"}, 401
-#     except Exception as e:
-#         return e.__dict__ , 401
-
 @app.route('/')
 def hello_world():
 	x = 'world'

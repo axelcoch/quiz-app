@@ -3,6 +3,26 @@ from services.model import Question, Answer
 from datetime import datetime
 from services.connection import init_db, build_db
 
+# def select_question(query, answer_id = False):
+#     db = init_db()
+#     selection = db.execute(query).fetchone() 
+
+#     if selection:
+#         id, title, text, position, image, answers = selection
+#         possible_answers = []
+#         for i in answers.split("|"):
+#             id_q, text_q, isCorrect = i.split("/")
+#             possible_answers.append(Answer(text_q, True if isCorrect=='1' else False, id_q))
+#         question = Question(title, text, position, image, possible_answers, id)
+#         db.close()
+#         return question.serialize(answer_id), 200
+#     db.close()
+#     return {"message": "Aucune question correspondante"}, 404
+    
+# def get_id(id, answer_id = False):
+#     return select_question(f"SELECT Question.*, group_concat(Reponse.id||'/'||Reponse.text||'/'||Reponse.isCorrect,'|') as possibleAnswers FROM Reponse LEFT JOIN Question on Question.id = Reponse.id_question where Question.id = {id} GROUP BY Question.id",
+#                             answer_id)
+
 def select_question(query, answer_id = False):
     db = init_db()
     selection = db.execute(query).fetchone() 
@@ -17,11 +37,12 @@ def select_question(query, answer_id = False):
         db.close()
         return question.serialize(answer_id), 200
     db.close()
-    return {"message": "Aucune question correspondante"}, 404
-    
+    return {"message": "No corresponding question"}, 404
+
 def get_id(id, answer_id = False):
     return select_question(f"SELECT Question.*, group_concat(Reponse.id||'/'||Reponse.text||'/'||Reponse.isCorrect,'|') as possibleAnswers FROM Reponse LEFT JOIN Question on Question.id = Reponse.id_question where Question.id = {id} GROUP BY Question.id",
                             answer_id)
+
 
 def get_pos(position, answer_id = False):
     return select_question(f"SELECT Question.*, group_concat(Reponse.id||'/'||Reponse.text||'/'||Reponse.isCorrect,'|') as possibleAnswers FROM Reponse LEFT JOIN Question on Question.id = Reponse.id_question where position = {position} GROUP BY Question.id",
@@ -73,19 +94,66 @@ def add_question(questions):
     db.close()
     return {"id": id}, 200
 
-def delete_all():
-    db = init_db()
-    cur = db.cursor()
-    cur.execute("begin")
+# def delete_all():
+#     db = init_db()
+#     cur = db.cursor()
+#     cur.execute("begin")
 
-    delete = cur.execute(f"DELETE FROM Question")
-    delete
+#     delete = cur.execute(f"DELETE FROM Question")
+#     # # "DELETE FROM Reponse","DELETE FROM Question"
+#     # delete
+#     # print(delete)
 
-    cur.execute("commit")
-    cur.close()
-    db.close()
+#     cur.execute("commit")
+#     cur.close()
+#     db.close()
     
-    return delete, 204
+#     return delete, 204
+
+# def delete_all():
+#     db = init_db()
+#     cur = db.cursor()
+#     try:
+#         cur.execute("begin")
+
+#         delete = cur.execute(f"DELETE FROM Question")
+#         delete
+#         cur.execute(f"DELETE FROM Reponse")
+#         cur.execute("commit")
+#     finally:
+#         cur.close()
+#         db.close()
+
+#     return delete, 204
+
+def delete_all():
+    with init_db() as db:
+        cur = db.cursor()
+        try:
+            cur.execute("begin")
+            cur.execute("DELETE FROM Reponse")
+            cur.execute("DELETE FROM Question")
+            cur.execute("commit")
+            return "", 204
+        except sqlite3.Error as e:
+            print(f"An error occurred: {e}")
+            return "", 500
+        finally:
+            cur.close()
+
+def delete_all_part():
+     with init_db() as db:
+        cur = db.cursor()
+        try:
+            cur.execute("begin")
+            cur.execute(f"DELETE FROM Participant")
+            cur.execute("commit")
+            return "", 204
+        except sqlite3.Error as e:
+            print(f"An error occurred: {e}")
+            return "", 500
+        finally:
+            cur.close()
 
 def delete_id(id):
     db = init_db()
@@ -95,7 +163,7 @@ def delete_id(id):
     question, status = get_id(id)
     if status == 200 :
         cur.execute(f"DELETE FROM Question where id = {id}")
-        cur.execute(f"DELETE FROM Answer where id = {id}")
+        cur.execute(f"DELETE FROM Reponse where id = {id}")
         cur.execute(f"UPDATE Question SET position = position - 1 "
                     f"WHERE position >= {question['position']!r}")
     else:
@@ -112,24 +180,25 @@ def update_question(new_question, id):
     cur = db.cursor()
     cur.execute("begin")
 
-    input_question = Question()
-    possible_answers = [Answer() for i in new_question["possibleAnswers"]]
+    input_question = Question("", "", 0, "", [])
+    possible_answers = [Answer("", False) for i in new_question["possibleAnswers"]]
 
-    for i,answer_json in enumerate(new_question["possibleAnswers"]) :
+    for i, answer_json in enumerate(new_question["possibleAnswers"]):
         possible_answers[i].deserialize(answer_json.copy())
 
     new_question["possibleAnswers"] = possible_answers
     input_question.deserialize(new_question)
-    question_json, status = get_id(int(id),True)
+    question_json, status = get_id(int(id), True)
     if status == 200:
-        if int(input_question.position) < question_json["position"] :
+        if int(input_question.position) < question_json["position"]:
             cur.execute(f"UPDATE Question SET position = -1 WHERE id = {int(id)!r}")
             cur.execute(f"UPDATE Question SET position = position + 1 WHERE position >= {input_question.position!r} and position < {question_json['position']!r}")
         elif int(input_question.position) > question_json["position"]:
             cur.execute(f"UPDATE Question SET position = -1 WHERE id = {question_json['id']!r}")
             cur.execute(f"UPDATE Question SET position = position - 1 WHERE position <= {input_question.position!r} and position > {question_json['position']!r}")
     else:
-        return {"message":"Question non trouvée"},404
+        return {"message": "Question non trouvée"}, 404
+
     cur.execute(f"UPDATE Question SET position = {input_question.position!r},"
                 f"title = {input_question.title!r},"
                 f"text = {input_question.text!r},"
@@ -137,7 +206,7 @@ def update_question(new_question, id):
 
     cur.execute(f"DELETE FROM Reponse WHERE id = {question_json['id']!r}")
     insert_reponse = ""
-    for answer in possible_answers :
+    for answer in possible_answers:
         insert_reponse += f"({question_json['id']!r},{answer.text!r},{answer.isCorrect!r}),"
     cur.execute(f"INSERT OR IGNORE INTO Reponse (id, text, isCorrect) values"
                 f"{insert_reponse[:-1]}")
@@ -146,7 +215,93 @@ def update_question(new_question, id):
     cur.close()
     db.close()
 
-    return question_json, 204
+    return {}, 204
+
+
+
+# def update_question(new_question, id):
+#     db = init_db()
+#     cur = db.cursor()
+#     cur.execute("begin")
+
+#     input_question = Question("", "", 0, "", [])
+#     possible_answers = [Answer("", False) for i in new_question["possibleAnswers"]]
+
+#     for i, answer_json in enumerate(new_question["possibleAnswers"]):
+#         possible_answers[i].deserialize(answer_json.copy())
+
+#     new_question["possibleAnswers"] = possible_answers
+#     input_question.deserialize(new_question)
+#     question_json, status = get_id(int(id), True)
+#     if status == 200:
+#         if int(input_question.position) < question_json["position"]:
+#             cur.execute(f"UPDATE Question SET position = -1 WHERE id = {int(id)!r}")
+#             cur.execute(f"UPDATE Question SET position = position + 1 WHERE position >= {input_question.position!r} and position < {question_json['position']!r}")
+#         elif int(input_question.position) > question_json["position"]:
+#             cur.execute(f"UPDATE Question SET position = -1 WHERE id = {question_json['id']!r}")
+#             cur.execute(f"UPDATE Question SET position = position - 1 WHERE position <= {input_question.position!r} and position > {question_json['position']!r}")
+#     else:
+#         return {"message": "Question non trouvée"}, 404
+
+#     cur.execute(f"UPDATE Question SET position = {input_question.position!r},"
+#                 f"title = {input_question.title!r},"
+#                 f"text = {input_question.text!r},"
+#                 f"image = {input_question.image!r} WHERE id = {question_json['id']!r}")
+
+#     cur.execute(f"DELETE FROM Reponse WHERE id = {question_json['id']!r}")
+#     insert_reponse = ""
+#     for answer in possible_answers:
+#         insert_reponse += f"({question_json['id']!r},{answer.text!r},{answer.isCorrect!r}),"
+#     cur.execute(f"INSERT OR IGNORE INTO Reponse (id, text, isCorrect) values"
+#                 f"{insert_reponse[:-1]}")
+
+#     cur.execute('commit')
+#     cur.close()
+#     db.close()
+
+#     return question_json, 204
+
+
+# def update_question(new_question, id):
+#     db = init_db()
+#     cur = db.cursor()
+#     cur.execute("begin")
+
+#     input_question = Question()
+#     possible_answers = [Answer() for i in new_question["possibleAnswers"]]
+
+#     for i,answer_json in enumerate(new_question["possibleAnswers"]) :
+#         possible_answers[i].deserialize(answer_json.copy())
+
+#     new_question["possibleAnswers"] = possible_answers
+#     input_question.deserialize(new_question)
+#     question_json, status = get_id(int(id),True)
+#     if status == 200:
+#         if int(input_question.position) < question_json["position"] :
+#             cur.execute(f"UPDATE Question SET position = -1 WHERE id = {int(id)!r}")
+#             cur.execute(f"UPDATE Question SET position = position + 1 WHERE position >= {input_question.position!r} and position < {question_json['position']!r}")
+#         elif int(input_question.position) > question_json["position"]:
+#             cur.execute(f"UPDATE Question SET position = -1 WHERE id = {question_json['id']!r}")
+#             cur.execute(f"UPDATE Question SET position = position - 1 WHERE position <= {input_question.position!r} and position > {question_json['position']!r}")
+#     else:
+#         return {"message":"Question non trouvée"},404
+#     cur.execute(f"UPDATE Question SET position = {input_question.position!r},"
+#                 f"title = {input_question.title!r},"
+#                 f"text = {input_question.text!r},"
+#                 f"image = {input_question.image!r} WHERE id = {question_json['id']!r}")
+
+#     cur.execute(f"DELETE FROM Reponse WHERE id = {question_json['id']!r}")
+#     insert_reponse = ""
+#     for answer in possible_answers :
+#         insert_reponse += f"({question_json['id']!r},{answer.text!r},{answer.isCorrect!r}),"
+#     cur.execute(f"INSERT OR IGNORE INTO Reponse (id, text, isCorrect) values"
+#                 f"{insert_reponse[:-1]}")
+
+#     cur.execute('commit')
+#     cur.close()
+#     db.close()
+
+#     return question_json, 204
 
 def get_quiz_info():
     db = init_db()
@@ -228,17 +383,4 @@ def add_participant(player):
     db.close()
     return {"l_a": l_a, "score": score, "playerName": player['playerName'], "date_attempt": now}, 200
 
-def delete_all_part():
-    db = init_db()
-    cur = db.cursor()
-    cur.execute("begin")
 
-    try:
-        cur.execute(f"DELETE FROM Participant")
-    except sqlite3.Error as e:
-        print(f'An error occurred: {e}')
-
-    cur.execute('commit')
-    cur.close()
-    db.close()
-    return {}, 204
