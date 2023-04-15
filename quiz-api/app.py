@@ -100,8 +100,8 @@ def update_question(question_id):
 @app.route('/participations',methods=['POST'])
 def add_participant():
 
-    answers = request.get_json()
-    return functions.add_participant(answers)
+    participant = request.get_json()
+    return functions.add_participant(participant)
 
 @app.route('/participations/all', methods=['DELETE'])
 def deleteAllPart():

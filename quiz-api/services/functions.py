@@ -31,7 +31,7 @@ def select_question(query, answer_id = False):
         id, title, text, position, image, answers = selection
         possible_answers = []
         for i in answers.split("|"):
-            id_q, text_q, isCorrect = i.split("/")
+            id_q, text_q, isCorrect = i.split("µ")
             possible_answers.append(Answer(text_q, True if isCorrect=='1' else False, id_q))
         question = Question(title, text, position, image, possible_answers, id)
         db.close()
@@ -40,12 +40,12 @@ def select_question(query, answer_id = False):
     return {"message": "No corresponding question"}, 404
 
 def get_id(id, answer_id = False):
-    return select_question(f"SELECT Question.*, group_concat(Reponse.id||'/'||Reponse.text||'/'||Reponse.isCorrect,'|') as possibleAnswers FROM Reponse LEFT JOIN Question on Question.id = Reponse.id_question where Question.id = {id} GROUP BY Question.id",
+    return select_question(f"SELECT Question.*, group_concat(Reponse.id||'µ'||Reponse.text||'µ'||Reponse.isCorrect,'|') as possibleAnswers FROM Reponse LEFT JOIN Question on Question.id = Reponse.id_question where Question.id = {id} GROUP BY Question.id",
                             answer_id)
 
 
 def get_pos(position, answer_id = False):
-    return select_question(f"SELECT Question.*, group_concat(Reponse.id||'/'||Reponse.text||'/'||Reponse.isCorrect,'|') as possibleAnswers FROM Reponse LEFT JOIN Question on Question.id = Reponse.id_question where position = {position} GROUP BY Question.id",
+    return select_question(f"SELECT Question.*, group_concat(Reponse.id||'µ'||Reponse.text||'µ'||Reponse.isCorrect,'|') as possibleAnswers FROM Reponse LEFT JOIN Question on Question.id = Reponse.id_question where position = {position} GROUP BY Question.id",
                             answer_id)
 
 def count():
@@ -356,11 +356,13 @@ def get_quiz_info():
     except sqlite3.Error as e:
         print(f'An error occurred: {e}')
     try:
-        part_info = cur.execute(f"SELECT playerName, score, date FROM Participant ORDER BY score DESC LIMIT 10")
+        part_info = cur.execute(f"SELECT playerName, score, date FROM Participant ORDER BY score DESC LIMIT 100")
     except sqlite3.Error as e:
         print(f'An error occurred: {e}')
 
+    # print(part_info)
     for participation in part_info :
+        print(participation)
         part_details.append({"playerName": participation[0], "score": participation[1], "date": participation[2]})
     
     cur.close()
@@ -424,48 +426,51 @@ def get_quiz_info():
 #     return {"l_a": l_a, "score": score, "playerName": player['playerName'], "date_attempt": now}, 200
 
 def add_participant(player):
-# Validation and scoring logic
+
     quiz_info = get_quiz_info()
-    score = 0
     total = quiz_info[0]["size"]
+    
     if quiz_info[1] != 200:
         return {"error": "Impossible de récupérer les informations du quiz"}, 500
     if len(player['answers']) < total:
         return {"error": "Reponse manquante"}, 400
-    if len(player['answers']) > total:
+    elif len(player['answers']) > total:
         return {"error": "Trop de reponse"}, 400
 
     l_a = []
+    score = 0
     for index, answer_chosen in enumerate(player["answers"]):
         question, status = get_pos(index + 1)
         if status != 200:
             return {"error": "Erreur question"}, 500
         possibleAnswers = question["possibleAnswers"]
+        # print(possibleAnswers)
 
-        if not (0 <= answer_chosen - 1 < len(possibleAnswers)):
-            return {"error": "Réponse choisie non valide"}, 400
+        # if not (0 <= answer_chosen - 1 < len(possibleAnswers)):
+        #     return {"error": "Réponse choisie non valide"}, 400
 
         for idx, correct in enumerate(possibleAnswers):
             if correct['isCorrect'] == True:
                 correct_text = correct['text']
                 isCorrect = False
 
-                if idx == answer_chosen - 1:
+                if idx + 1 == answer_chosen:
                     score += 1
-                    answer_chosen -= 1
+                    # answer_chosen -= 1
                     isCorrect = True
-                if not (0 <= answer_chosen - 1 < len(possibleAnswers)):
-                    return {"error": "Réponse choisie non valide"}, 400
-                l_a.append((question['text'], possibleAnswers[answer_chosen]['text'], isCorrect))
+                l_a.append((idx+1, isCorrect))
+                # if not (0 <= answer_chosen - 1 < len(possibleAnswers)):
+                #     return {"error": "Réponse choisie non valide"}, 400
+                # l_a.append((question['text'], possibleAnswers[answer_chosen]['text'], isCorrect))
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Insert participant data into database
-    participant_query = "INSERT OR IGNORE INTO Participant (playerName, score, date) VALUES (?, ?, ?)"
-    params = (player['playerName'], score, now)
+    playerN = player['playerName']
+    participant_query = f"INSERT OR IGNORE INTO Participant (playerName, score, date) VALUES ('{playerN}', '{score}', '{now}')"
     db = init_db()  # get the database connection from your init_db() function
     cur = db.cursor()
     try:
-        cur.execute(participant_query, params)
+        cur.execute(participant_query)
     except sqlite3.Error as e:
         print(f'An error occurred: {e}')
         return {"error": "An error occurred while adding participant to the database"}, 500
@@ -481,3 +486,5 @@ def add_participant(player):
     }
 
     return result, 200
+
+
