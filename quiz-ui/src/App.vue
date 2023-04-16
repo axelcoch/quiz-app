@@ -4,8 +4,9 @@ import Headers from "./views/Header.vue";
 </script>
 
 <template>
-  <div class="container-fluid p-0 Background mx-auto">
-    <Headers />
+  <Headers />
+  <div class="Background mx-auto">
+    
     <RouterView />
   </div>
 </template>
