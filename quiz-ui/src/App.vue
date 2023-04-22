@@ -5,13 +5,12 @@ import Headers from "./views/Header.vue";
 
 <template>
   <Headers />
-  <div class="Background mx-auto">
-    
+  <div class="bg-image">
     <RouterView />
   </div>
 </template>
 
-<style scoped>
+<!-- <style scoped>
 header {
   line-height: 1.5;
   max-height: 100vh;
@@ -75,4 +74,4 @@ nav a:first-of-type {
     margin-top: 1rem;
   }
 }
-</style>
+</style> -->

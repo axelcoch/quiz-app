@@ -48,14 +48,7 @@ a,
 }
 
 
-.container {
-  margin-left: 250px;
-  margin-right: 200px;
-  width: 1200px;
-  height: 300px;
-  border: 10px rgba(23, 0, 171, 0) solid;
-  
-}
+
 
 .score {
   margin-left: center;
@@ -90,24 +83,28 @@ a,
   margin-left: 400px;
 } */
 
-.centered-element{
-  background-image: url("japon2.png");
-  opacity: 0.95;
-  width: 1000px;
-  background-repeat: repeat;
-  padding: 20px;
-  border-radius: 25px;
-  margin-top: 20px;
-}
+/* .container {
+  margin: 0;
+
+  width: 1200px;
+  height: 300px;
+  border: 10px rgba(23, 0, 171, 0) solid;
+} */
 
 .centered-element{
-  width: 80%;
-  margin-left: auto;
+  background-image: url("mononoke.jpg");
+  width: 100%;
   background-color: #5c3b00;
+  /* background-repeat: repeat; */
+ 
+  /* opacity: 0.95;
+  width: 1000px;
+  
+  padding: 20px;
   border-radius: 25px;
-  padding: 50px;
-  box-shadow: 5px 5px 10px #888888;
+  margin-top: 20px; */
 }
+
 
 .centered-element h2 {
   text-align: center;
@@ -123,23 +120,42 @@ a,
   line-height: 1.5em;
 }
 
-.nav-link{
+.navbar-dark .nav-item .nav-link {
+  color: #fff;
+}
+
+.navbar-dark .nav-item .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  border-radius: 0.25rem;
+  color: #fff;
+}
+
+.fa-li {
+  position: relative;
+  left: 0;
+}
+
+/* .nav-link{
   text-align: center;
   color: white;
-  text-shadow: 2px 2px #333333;
-  margin-bottom: 20px;
-}
+  /* text-shadow: 2px 2px #333333; */
+  /* margin-bottom: 20px;
+} */ 
 
-.Background{
+/* .Background{
   background-color: rgba(105, 105, 105, .35);
-  border-radius: 25px;
-  padding: 50px;
-}
-
-body{
-  background-image: url("japon7.jpg");
+  /* border-radius: 25px; */
+  /* padding: 50px; */
+  /* background-image: url("japon7.jpg");
   background-repeat:no-repeat;
   background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-position: center;} */ 
+
+.bg-image{
+  background-image: url('vogue.png');
+  background-repeat:no-repeat; 
+  background-size: cover; 
+  background-position: center; 
+  height: 100vh;
 }

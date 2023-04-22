@@ -1,8 +1,8 @@
 <template>
   
-  <div class="d-flex flex-column justify-content-center align-items-center w-80">
-    <h1 style="color: white">{{ question.text }}</h1>
-    <h5 style="color: white">{{ question.title }}</h5>
+  <div class="d-flex flex-column justify-content-center align-items-center w-80 text-dark">
+    <h1>{{ question.text }}</h1>
+    <h5>{{ question.title }}</h5>
     <img v-if="question.image" :src="question.image"/>
 
     <div class="d-flex flex-column justify-content-center text-center my-5 w-50 p-3" style="background-color: #eee;">
