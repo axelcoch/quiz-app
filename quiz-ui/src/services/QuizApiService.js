@@ -33,9 +33,6 @@ export default {
   getQuestion(position) {
     return this.call("get", "questions?position="+position);
   },
-  getNumberOfQuestion() {
-    return this.call("get", "nb_question");
-  },
   login(password) {
     return this.call("post", "login", { password: password });
   },

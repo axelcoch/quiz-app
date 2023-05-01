@@ -1,7 +1,8 @@
 <template>
-    <div class="text-center">
-    <div class="container">
-    <p class="text-dark h2">Saisissez votre nom juste en dessous:</p>
+    <div class="container text-center">
+    <div class="row justify-content-center align-items-center" style="height: 70vh;">
+      <div class="col-md-12">
+    <p class="text-dark h2">Saisissez votre nom juste en dessous :</p>
     <div class="form-floating mx-auto w-25">
         <input
             type="text"
@@ -14,9 +15,9 @@
         <label style="color: white" class="text-dark" for="name" ></label>
         <br/>
         <button class="text-center btn btn-light link-dark text-decoration-none" type="button" @click="launchNewQuiz()">GO!</button>
- 
+      </div>
     </div>
-    </div>
+  </div>
     </div>
 </template>
   

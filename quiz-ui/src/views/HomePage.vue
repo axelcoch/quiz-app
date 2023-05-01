@@ -1,20 +1,19 @@
 <template>
 
-  <div class="col text-center">
-  <div class="container">
+  <div class="container text-center">
+    <div class="row justify-content-center align-items-center" style="height: 100vh;">
+  <div class="col-md-12">
   <h1 class="text-dark">QuizAnime</h1>
-  <!-- <div v-for="scoreEntry in registeredScores" v-bind:key="scoreEntry.date">
-  {{ scoreEntry.playerName }} - {{ scoreEntry.score }}
-  </div> -->
       <br/>
-      <button class="btn btn-light">
+      <button class="btn btn-light btn-lg">
         <router-link to="/start-new-quiz-page" class="link-dark text-decoration-none">Démarrer le quiz !</router-link>
       </button>
     </div>
-    <div class="container">
+    <div class="col-md-12">
       <br>
   <ScorePage /></div>
   </div>
+</div>
 
 
 </template>

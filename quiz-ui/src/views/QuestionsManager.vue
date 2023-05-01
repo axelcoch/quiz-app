@@ -1,5 +1,8 @@
 <template>
-  <div class="text-dark">
+  <div v-if="totalNumberOfQuestion === 0" class="d-flex justify-content-center">
+    <img src="../assets/zoro_nothing.png" class="" alt="zorro">
+  </div>
+  <div class="text-dark" v-else>
     <h1>Question {{ currentQuestionPosition }} / {{ totalNumberOfQuestion }}</h1>
     <QuestionDisplay :question="currentQuestion" @answer-selected="answerClickedHandler" />
     <br/>

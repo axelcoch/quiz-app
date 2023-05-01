@@ -5,7 +5,7 @@ import Headers from "./views/Header.vue";
 
 <template>
   <Headers />
-  <div class="bg-image">
+  <div class="bg-image my-auto">
     <RouterView />
   </div>
 </template>

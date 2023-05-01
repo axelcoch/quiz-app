@@ -90,11 +90,11 @@ a,
   height: 300px;
   border: 10px rgba(23, 0, 171, 0) solid;
 } */
-
+/* 
 .centered-element{
   background-image: url("mononoke.jpg");
   width: 100%;
-  background-color: #5c3b00;
+  background-color: #5c3b00;} */
   /* background-repeat: repeat; */
  
   /* opacity: 0.95;
@@ -103,22 +103,22 @@ a,
   padding: 20px;
   border-radius: 25px;
   margin-top: 20px; */
-}
 
 
+/* 
 .centered-element h2 {
   text-align: center;
   color: white;
   text-shadow: 2px 2px #333333;
   margin-bottom: 20px;
-}
-
+} */
+/* 
 .centered-element p {
   color: white;
   text-shadow: 2px 2px #333333;
   font-size: 1.2em;
   line-height: 1.5em;
-}
+} */
 
 .navbar-dark .nav-item .nav-link {
   color: #fff;

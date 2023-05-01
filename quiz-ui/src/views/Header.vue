@@ -13,7 +13,7 @@
                 <RouterLink class="nav-link" to="/">Home</RouterLink>
               </li>
               <li class="nav-item">
-                <RouterLink class="nav-link" to="/start-new-quiz-page">QuizPage</RouterLink>
+                <RouterLink class="nav-link" to="/administration">Administration</RouterLink>
               </li>
             </ul>
           </div>
