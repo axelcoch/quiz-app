@@ -112,7 +112,7 @@ def delete_id(id):
     question, status = get_id(id)
     if status == 200 :
         cur.execute(f"DELETE FROM Question where id = {id}")
-        cur.execute(f"DELETE FROM Reponse where id = {id}")
+        cur.execute(f"DELETE FROM Reponse where id_question = {id}")
         cur.execute(f"UPDATE Question SET position = position - 1 "
                     f"WHERE position >= {question['position']!r}")
     else:

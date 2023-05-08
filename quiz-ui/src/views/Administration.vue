@@ -1,53 +1,78 @@
 <template>
-    <div v-if="token" class="container text-center">
-      <div class="row justify-content-center align-items-center">
+    <div class="container text-center">
+      <div v-if="token" class="row justify-content-center align-items-center">
         <label style="color: white" class="text-dark" for="name" ></label>
-            <br/>
+        <br/>
             <button class="text-center btn btn-light link-dark text-decoration-none" type="button" @click="logout()">déconnexion</button>
-
+            <br/><br/>
         <div class="col-md-12">
-          <div class="mx-auto w-25">
-            <label style="color: white" class="text-dark" for="name" ></label>
-            <br/>
-            <button class="text-center btn btn-light link-dark text-decoration-none" type="button" @click="deleteAllQuestions()">Supprimer toutes les questions</button>
-            <label style="color: white" class="text-dark" for="name" ></label>
-            <br/>
-            <button class="text-center btn btn-light link-dark text-decoration-none" type="button" @click="deleteAllParticipations()">Supprimer tous les participants</button>
-          </div>
+          <div class="mx-auto w-75">
+              <div class="btn-group">
+                <label style="color: white" class="text-dark" for="name" ></label>
+                <br/>
+                <button class="text-center btn btn-light link-dark text-decoration-none" type="button" @click="deleteAllQuestions()">Supprimer toutes les questions</button>
+                <label style="color: white" class="text-dark" for="name" ></label>
+                <br/>
+                <button class="text-center btn btn-light link-dark text-decoration-none" type="button" @click="deleteAllParticipations()">Supprimer tous les participants</button>
+                <label style="color: white" class="text-dark" for="name" ></label>
+                <br/>
+                <button class="text-center btn btn-light link-dark text-decoration-none" @click="listQuestionHandler">Afficher la liste des questions</button>
+                <label style="color: white" class="text-dark" for="name" ></label>
+                <br/>      
+                <button class="text-center btn btn-light link-dark text-decoration-none" @click="addQuestionHandler">Ajouter une nouvelle question</button> 
+              </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+          <br/>
+        <QuestionList v-if="admin_mode === 'list'" :question_list="question_list" @question-view="viewQuestionHandler" @question-edit="editQuestionHandler" @question-delete="deleteQuestion"/>
+        <QuestionEdit v-else-if="admin_mode === 'newQuestion'" :question="emptyQuestion" @update:question="postQuestion"/>
         </div>
       </div>
-
-    </div>
-    <div v-else class="container text-center">
+      <div v-else class="container text-center">
         <div class="row justify-content-center align-items-center" style="height: 70vh;">
-      <div class="col-md-12">
-      <p class="text-dark h2">Saisissez votre mot de passe en dessous :</p>
-      <div class="form-floating mx-auto w-25">
-        <input
-            type="text"
+          <div class="col-md-12">
+            <p class="text-dark h2">Saisissez votre mot de passe en dessous :</p>
+          <div class="form-floating mx-auto w-25">
+            <input
+            type="password"
             class="form-control"
             v-model="password"
             id="password"
             name="password"
             placeholder="mot de passe"
-        >
-    </div>
-      <label style="color: white" class="text-dark" for="name" ></label>
-      <br/>
-      <button class="text-center btn btn-light link-dark text-decoration-none" type="button" @click="login()">Connexion</button>
-      <br/><br/>
-      <div class="text-center text-dark h4" v-if="!password && wrong" style="background-color: #eee; opacity: 0.70;"> 
+            >
+          </div>
+          <label style="color: white" class="text-dark" for="name" ></label>
+          <br/>
+          <button class="text-center btn btn-light link-dark text-decoration-none" type="button" @click="login()">Connexion</button>
+          <br/><br/>
+        <div class="text-center text-dark h4" v-if="!password && wrong" style="background-color: #eee; opacity: 0.70;"> 
         Ce n'est pas le bon mot de passe, un mail a été envoyé aux autorités compétentes...
-      </div>
+        </div>
     </div>
     </div>
     </div>
+      
+<!--   
+      <QuestionList v-if="admin_mode === 'list'" :question_list="question_list" @question-view="viewQuestionHandler" @question-edit="editQuestionHandler" @question-delete="deleteQuestion"/>
+      <QuestionEdit v-else-if="admin_mode === 'editQuestion'" :question="question" @update:question="updateQuestion"/>
+      
+      <QuestionDisplay v-else-if="admin_mode === 'viewQuestion'" :question="question"/> -->
+              <!-- <div>
+ 
+        </div> -->
+  
+    </div>
+
   </template>
   <script>
 
 
 
   import QuestionDisplay from './QuestionDisplay.vue';
+  import QuestionList from './QuestionList.vue';
+  import QuestionEdit from './QuestionEdit.vue';
   import participationStorageService from "@/services/ParticipationStorageService";
   import quizApiService from "@/services/QuizApiService";
   
@@ -58,13 +83,27 @@
       password : '',
       wrong: false,
       token : null,
+      admin_mode : "",
+      question : null,
+      question_list : Array(),
+      forceUpdateValue: false,
+      emptyQuestion : {
+        text : null,
+        title : null,
+        image : null,
+        position : null,
+        possibleAnswers : null
+      }
     };
   },
   components: {
-    QuestionDisplay
+    QuestionDisplay,
+    QuestionList,
+    QuestionEdit
   },
   async created() {
     this.token = participationStorageService.getToken();
+    this.updateQuestionList()
   },
   methods: {
     async login(){
@@ -90,8 +129,122 @@
     async deleteAllQuestions(){
       await quizApiService.deleteAllQuestions(this.token)
       this.token = participationStorageService.getToken()
+      this.updateQuestionList()
+      this.admin_mode = ''
+    },
+    async deleteQuestion(questionPosition){
+      let questionPromise = quizApiService.getQuestion(questionPosition);
+      let questionApiResult = await questionPromise;
+      console.log(questionApiResult)
+      await quizApiService.deleteQuestion(questionApiResult.data.id,this.token)
+      this.updateQuestionList()
+      this.admin_mode = ''
+    },
+    addQuestionHandler(){
+      this.admin_mode = 'newQuestion'
+    },
+    listQuestionHandler(){
+      this.admin_mode = 'list'
+    },
+    async updateQuestionList(){
+      this.question_list = Array()
+      let quizInfo = quizApiService.getQuizInfo();
+      let quizInfoResult = await quizInfo;
+      for (let i = 1; i <= quizInfoResult.data.size; i++) {
+        try {
+          let questionPromise = quizApiService.getQuestion(i);
+          let questionApiResult = await questionPromise;
+          this.question_list.push(questionApiResult.data)
+        } catch (error){
+          console.log(error)
+        }
+      }
+    },
+    async editQuestionHandler(questionPosition){
+      let questionPromise = quizApiService.getQuestion(questionPosition);
+      let questionApiResult = await questionPromise;
+      this.admin_mode = 'editQuestion'
+      this.question=questionApiResult.data
+    },
+    async updateQuestion(new_question){
+      await quizApiService.updateQuestion(this.question.id,new_question,this.token);
+      this.token = participationStorageService.getToken();
+      this.updateQuestionList()
+      this.admin_mode = 'list'
+    },
+    async postQuestion(new_question){
+      console.log(new_question)
+      await quizApiService.postQuestion(new_question,this.token);
+      this.token = participationStorageService.getToken();
+      this.updateQuestionList()
+      this.admin_mode = 'list'
+    },
+    async viewQuestionHandler(questionPosition){
+      let questionPromise = quizApiService.getQuestion(questionPosition);
+      let questionApiResult = await questionPromise;
+      this.admin_mode = 'viewQuestion'
+      this.question=questionApiResult.data
     }
   }
 }
-</script>
+//     addQuestionHandler(){
+//       this.admin_mode = 'newQuestion'
+//     },
+//     async deleteQuestion(questionPosition){
+//       // TODO: Gérer les erreurs
+//       let questionPromise = quizApiService.getQuestion(questionPosition);
+//       let questionApiResult = await questionPromise;
+//       console.log(questionApiResult)
+//       await quizApiService.deleteQuestion(questionApiResult.data.id,this.token)
+//       this.updateQuestionList()
+//     },
+//     async updateQuestionList(){
+  
+//       this.question_list = Array()
+//       let quizInfoPromise = quizApiService.getQuizInfo();
+//       let quizInfoResult = await quizInfoPromise;
+  
+//       for (let i = 1; i <= quizInfoResult.data.size; i++) {
+//         try {
+//           let questionPromise = quizApiService.getQuestion(i);
+//           let questionApiResult = await questionPromise;
+//           this.question_list.push(questionApiResult.data)
+//         } catch (error){
+//           console.log(error)
+//         }
+//       }
+//     },
+//     async editQuestionHandler(questionPosition){
+//       let questionPromise = quizApiService.getQuestion(questionPosition);
+//       let questionApiResult = await questionPromise;
+//       this.admin_mode = 'editQuestion'
+//       this.question=questionApiResult.data
+//     },
+//     async updateQuestion(new_question){
+//       // TODO: Gérer les erreurs
+//       await quizApiService.updateQuestion(this.question.id,new_question,this.token);
+//       this.token = participationStorageService.getToken();
+//       this.updateQuestionList()
+//       this.admin_mode = 'list'
+  
+//     },
+//     async postQuestion(new_question){
+//       console.log(new_question)
+//       await quizApiService.postQuestion(new_question,this.token);
+//       this.token = participationStorageService.getToken();
+//       this.updateQuestionList()
+//       this.admin_mode = 'list'
+//     },
+//     async viewQuestionHandler(questionPosition){
+//       let questionPromise = quizApiService.getQuestion(questionPosition);
+//       let questionApiResult = await questionPromise;
+//       this.admin_mode = 'viewQuestion'
+//       this.question=questionApiResult.data
+//     },
+//     listQuestionHandler(){
+//       this.admin_mode = 'list'
+//     },
+//   }
+//   };
+  </script>
   
