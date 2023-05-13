@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const instance = axios.create({
-	baseURL: `${import.meta.env.VITE_API_URL}`,
-  json: true
+  baseURL: `${import.meta.env.VITE_API_URL}`,
+  json: true,
 });
 
 export default {
@@ -31,7 +31,7 @@ export default {
     return this.call("get", "quiz-info");
   },
   getQuestion(position) {
-    return this.call("get", "questions?position="+position);
+    return this.call("get", "questions?position=" + position);
   },
   login(password) {
     return this.call("post", "login", { password: password });
@@ -53,5 +53,5 @@ export default {
   },
   deleteAllParticipations(token) {
     return this.call("delete", "participations/all", null, token);
-  }
+  },
 };
