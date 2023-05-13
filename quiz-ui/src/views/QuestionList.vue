@@ -71,11 +71,5 @@
       },
       emits: ["question-edit"]
     }
-    // , 
-    // methods: {
-    //   addQuestionHandler(){
-    //   this.admin_mode = 'newQuestion'
-    // }
-    // }
   };
   </script>

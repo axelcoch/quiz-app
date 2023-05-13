@@ -25,9 +25,11 @@
         </div>
         <div class="col-md-12">
           <br/>
-        <QuestionList v-if="admin_mode === 'list'" :question_list="question_list" @question-view="viewQuestionHandler" @question-edit="editQuestionHandler" @question-delete="deleteQuestion"/>
+        <QuestionList v-if="admin_mode === 'list'" :question_list="question_list" @question-detail="detailQuestionHandler" @question-edit="editQuestionHandler" @question-delete="deleteQuestion"/>
+        <QuestionDisplay v-else-if="admin_mode === 'detailQuestion'" :question="question"/>
         <QuestionEdit v-else-if="admin_mode === 'newQuestion'" :question="emptyQuestion" @update:question="postQuestion"/>
-        </div>
+        <QuestionEdit v-else-if="admin_mode === 'editQuestion'" :question="question" @update:question="updateQuestion"/>
+      </div>
       </div>
       <div v-else class="container text-center">
         <div class="row justify-content-center align-items-center" style="height: 70vh;">
@@ -53,15 +55,6 @@
     </div>
     </div>
     </div>
-      
-<!--   
-      <QuestionList v-if="admin_mode === 'list'" :question_list="question_list" @question-view="viewQuestionHandler" @question-edit="editQuestionHandler" @question-delete="deleteQuestion"/>
-      <QuestionEdit v-else-if="admin_mode === 'editQuestion'" :question="question" @update:question="updateQuestion"/>
-      
-      <QuestionDisplay v-else-if="admin_mode === 'viewQuestion'" :question="question"/> -->
-              <!-- <div>
- 
-        </div> -->
   
     </div>
 
@@ -179,10 +172,10 @@
       this.updateQuestionList()
       this.admin_mode = 'list'
     },
-    async viewQuestionHandler(questionPosition){
+    async detailQuestionHandler(questionPosition){
       let questionPromise = quizApiService.getQuestion(questionPosition);
       let questionApiResult = await questionPromise;
-      this.admin_mode = 'viewQuestion'
+      this.admin_mode = 'detailQuestion'
       this.question=questionApiResult.data
     }
   }
@@ -235,10 +228,10 @@
 //       this.updateQuestionList()
 //       this.admin_mode = 'list'
 //     },
-//     async viewQuestionHandler(questionPosition){
+//     async detailQuestionHandler(questionPosition){
 //       let questionPromise = quizApiService.getQuestion(questionPosition);
 //       let questionApiResult = await questionPromise;
-//       this.admin_mode = 'viewQuestion'
+//       this.admin_mode = 'detailQuestion'
 //       this.question=questionApiResult.data
 //     },
 //     listQuestionHandler(){

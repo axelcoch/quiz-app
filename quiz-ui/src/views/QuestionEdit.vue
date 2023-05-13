@@ -1,13 +1,13 @@
 <template>
     <form>
-      <div class="row d-flex flex-wrap flex-column" style="background-color: #eee; opacity: 0.70;">
-        <div class="form-row">
-        <div class="form-group col-md-6">
+      <div class="p-1" style="background-color: #eee; opacity: 0.70;">
+        <div class="row m-2">
+        <div class="form-group col col-md-10">
             <label style="color: white" class="text-dark" for="Titre">Titre de la question :</label>
             <br/>    
             <input type="text" class="form-control" id="Titre" placeholder="Titre" v-model="question.title">
         </div>
-        <div class="form-group col-md-2">
+        <div class="form-group col col-md-2">
             <label style="color: white" class="text-dark" for="Num">Numéro de la question :</label>
             <br/>  
             <select class="form-control" id="Num" v-model="question.position">
@@ -39,90 +39,85 @@
             </select>
         </div>
         </div>
-        <div class="form-group">
+        <div class="form-group m-2">
             <label style="color: white" class="text-dark" for="Enonce">Enoncé de la question :</label>
             <br/>  
             <textarea type="text" class="form-control" id="Enonce" placeholder="Enoncé" v-model="question.text"></textarea>
         </div>
-        <!-- <div class="row my-3">
-          <div class="col-md d-flex align-items-center justify-content-around ">
-              <ImageUpload @file-change="imageFileChangedHandler" />
-          </div>
-        </div> -->
-        <div class="form-row d-flex">
-          <div class="col-md d-flex flex-wrap flex-column mx-3">
-            <div class="col-md">
+        <div class="form-group m-2">
+            <label style="color: white" class="text-dark" for="Img">Image en Base64 :</label>
+            <br/>  
+            <textarea type="text" class="form-control" id="Enonce" placeholder="Img" v-model="question.image"></textarea>
+        </div>
+
+        <div class="row m-2">
+          <div class="col">
+            <div class="row">
+            <div class="col col-md-8">
              <label style="color: white" class="text-dark" for="Aw1">Réponse 1 :</label>
              <br/>  
              <input type="text" class="form-control" id="Aw1" v-model="this.firstAnswer.text">
             </div>
-            <div class="col-md my-2">
+            <div class="col my-4">
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" id="true" name="contact" value="true" v-model="this.firstAnswer.isCorrect"/>
-                    <label class="form-check-label" for="true">True</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="false" name="contact" value="false" v-model="this.firstAnswer.isCorrect"/>
-                    <label class="form-check-label" for="false">False</label>
+                    <label class="form-check-label" for="true">Bonne réponse</label>
                 </div>
             </div>
           </div>
-  
-          <div class="form-row">
-            <div class="col-md">
+          </div>
+
+          <div class="col">
+            <div class="row">
+            <div class="col col-md-8">
                 <label style="color: white" class="text-dark" for="Aw2">Réponse 2 :</label>
                 <br/>  
                 <input type="text" class="form-control" id="Aw2" v-model="this.secondAnswer.text">
             </div>
-            <div class="col-md my-2">
+            <div class="col my-4">
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="true" name="contact" value="true" v-model="this.secondAnswer.isCorrect"/>
-                    <label class="form-check-label" for="true">True</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="false" name="contact" value="false" v-model="this.secondAnswer.isCorrect"/>
-                    <label class="form-check-label" for="false">False</label>
+                  <input class="form-check-input" type="radio" id="true" name="contact" value="true" v-model="this.secondAnswer.isCorrect"/>
+                  <label class="form-check-label" for="true">Bonne réponse</label>
                 </div>
             </div>
           </div>
-  
-          <div class="col-md d-flex flex-wrap flex-column mx-3">
-            <div class="col-md">
+          </div>
+        </div>
+        
+        <div class="row m-2">
+        <div class="col">
+          <div class="row">
+            <div class="col col-md-8">
                 <label style="color: white" class="text-dark" for="Aw3">Réponse 3 :</label>
                 <br/>  
                 <input type="text" class="form-control" id="Aw3" v-model="this.thirdAnswer.text">
             </div>
-            <div class="col-md my-2">
+            <div class="col my-4">
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" id="true" name="contact" value="true" v-model="this.thirdAnswer.isCorrect"/>
-                    <label class="form-check-label" for="true">True</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="false" name="contact" value="false" v-model="this.thirdAnswer.isCorrect"/>
-                    <label class="form-check-label" for="false">False</label>
+                    <label class="form-check-label" for="true">Bonne réponse</label>
                 </div>
             </div>
           </div>
-  
-          <div class="col-md d-flex flex-wrap flex-column mx-3">
-            <div class="col-md">
+          </div>
+
+          <div class="col">
+            <div class="row">
+            <div class="col col-md-8">
                 <label style="color: white" class="text-dark" for="Aw4">Réponse 4 :</label>
                 <br/>  
                 <input type="text" class="form-control" id="Aw4" v-model="this.fourthAnswer.text">
             </div>
-            <div class="col-md my-2">
+            <div class="col my-4">
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" id="true" name="contact" value="true" v-model="this.fourthAnswer.isCorrect"/>
-                    <label class="form-check-label" for="true">True</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="false" name="contact" value="false" v-model="this.fourthAnswer.isCorrect"/>
-                    <label class="form-check-label" for="false">False</label>
+                    <label class="form-check-label" for="true">Bonne réponse</label>
                 </div>
             </div>
           </div>
-  
         </div>
+        </div>
+
         <div class="col-md-12">
         <label style="color: white" class="text-dark" for="name"></label>
         <br/>      
@@ -182,9 +177,9 @@
     },
     emits: ["update:question"],
     methods: {
-      imageFileChangedHandler(b64String) {
-        this.image = b64String;
-      },
+      // imageFileChangedHandler(b64String) {
+      //   this.image = b64String;
+      // },
       submit() {
         let possibleAnswersArray = Array()
         if (this.firstAnswer.text) {
