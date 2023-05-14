@@ -46,6 +46,7 @@ export default {
         this.currentQuestionPosition
       );
       let questionApiResult = await questionPromise;
+      console.log(questionApiResult)
       return questionApiResult.data;
     },
 

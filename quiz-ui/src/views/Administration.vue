@@ -36,7 +36,7 @@
             <br />
             <button
               class="text-center btn btn-light link-dark text-decoration-none"
-              @click="listQuestionHandler"
+              @click="listQuestionHandling"
             >
               Afficher la liste des questions
             </button>
@@ -44,7 +44,7 @@
             <br />
             <button
               class="text-center btn btn-light link-dark text-decoration-none"
-              @click="addQuestionHandler"
+              @click="addQuestionHandling"
             >
               Ajouter une nouvelle question
             </button>
@@ -56,9 +56,9 @@
         <QuestionList
           v-if="admin_mode === 'list'"
           :question_list="question_list"
-          @question-detail="detailQuestionHandler"
-          @question-edit="editQuestionHandler"
-          @question-delete="deleteQuestion"
+          @question-detail="detailQuestionHandling"
+          @question-edit="editQuestionHandling"
+          @question-delete="deleteQuestionHandling"
         />
         <QuestionDisplay
           v-else-if="admin_mode === 'detailQuestion'"
@@ -133,7 +133,6 @@ export default {
       admin_mode: "",
       question: null,
       question_list: Array(),
-      forceUpdateValue: false,
       emptyQuestion: {
         text: null,
         title: null,
@@ -178,7 +177,7 @@ export default {
       this.updateQuestionList();
       this.admin_mode = "";
     },
-    async deleteQuestion(position) {
+    async deleteQuestionHandling(position) {
       let questionPromise = quizApiService.getQuestion(position);
       let questionApiResult = await questionPromise;
       console.log(questionApiResult);
@@ -189,11 +188,23 @@ export default {
       this.updateQuestionList();
       this.admin_mode = "";
     },
-    addQuestionHandler() {
+    addQuestionHandling() {
       this.admin_mode = "newQuestion";
     },
-    listQuestionHandler() {
+    listQuestionHandling() {
       this.admin_mode = "list";
+    },
+    async editQuestionHandling(position) {
+      let questionPromise = quizApiService.getQuestion(position);
+      let questionApiResult = await questionPromise;
+      this.admin_mode = "editQuestion";
+      this.question = questionApiResult.data;
+    },
+    async detailQuestionHandling(position) {
+      let questionPromise = quizApiService.getQuestion(position);
+      let questionApiResult = await questionPromise;
+      this.admin_mode = "detailQuestion";
+      this.question = questionApiResult.data;
     },
     async updateQuestionList() {
       this.question_list = Array();
@@ -208,12 +219,6 @@ export default {
           console.log(error);
         }
       }
-    },
-    async editQuestionHandler(position) {
-      let questionPromise = quizApiService.getQuestion(position);
-      let questionApiResult = await questionPromise;
-      this.admin_mode = "editQuestion";
-      this.question = questionApiResult.data;
     },
     async updateQuestion(new_question) {
       await quizApiService.updateQuestion(
@@ -231,12 +236,6 @@ export default {
       this.token = participationStorageService.getToken();
       this.updateQuestionList();
       this.admin_mode = "list";
-    },
-    async detailQuestionHandler(position) {
-      let questionPromise = quizApiService.getQuestion(position);
-      let questionApiResult = await questionPromise;
-      this.admin_mode = "detailQuestion";
-      this.question = questionApiResult.data;
     },
   },
 };
