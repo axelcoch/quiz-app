@@ -26,7 +26,7 @@ class Question():
         self.position = position
         self.image = image
         self.possibleAnswers = possibleAnswers        
-
+        
     def serialize(self, answer_id=False):
         question_json = dict()
         for key, value in self.__dict__.items():

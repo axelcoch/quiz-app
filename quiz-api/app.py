@@ -69,7 +69,7 @@ def delete_all():
         return e.__dict__ , 401
 
     return functions.delete_all()
-
+      
 @app.route('/questions/<question_id>', methods=['DELETE'])
 def delete_by_id(question_id):
     #Récupérer le token envoyé en paramètre

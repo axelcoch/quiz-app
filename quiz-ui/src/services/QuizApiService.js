@@ -4,7 +4,7 @@ const instance = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}`,
   json: true,
 });
-
+    
 export default {
   async call(method, resource, data = null, token = null) {
     var headers = {

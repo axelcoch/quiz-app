@@ -1,4 +1,4 @@
-<template>
+<template>      
   <div class="container">
     <table
       class="table text-reset caption-top table-striped table-hover text-center"

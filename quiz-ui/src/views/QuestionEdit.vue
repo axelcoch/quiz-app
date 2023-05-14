@@ -1,4 +1,4 @@
-<template>
+<template>   
   <form>
     <div class="p-1" style="background-color: #eee; opacity: 0.7">
       <div class="row m-2">

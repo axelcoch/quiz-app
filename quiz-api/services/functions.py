@@ -74,7 +74,7 @@ def add_question(questions):
     db.close()
     return {"id": id}, 200
 
-
+      
 def delete_all():
     with init_db() as db:
         cur = db.cursor()

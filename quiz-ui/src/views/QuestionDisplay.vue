@@ -1,10 +1,10 @@
-<template>
+<template>   
   <div
     class="d-flex flex-column justify-content-center align-items-center text-dark"
   >
     <div
       class="card d-flex flex-column justify-content-center align-items-center p-2"
-      style="opacity: 0.8; width: 60%; max-width: 60rem; min-width: 20rem;"
+      style="opacity: 0.8; width: 60%; max-width: 60rem; min-width: 20rem"
     >
       <h1>{{ question.title }}</h1>
       <h4>{{ question.text }}</h4>

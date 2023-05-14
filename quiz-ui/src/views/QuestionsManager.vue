@@ -1,4 +1,4 @@
-<template>
+<template>         
   <div class="text-dark" v-if="totalNumberOfQuestion != 0">
     <h1>
       Question {{ currentQuestionPosition }} / {{ totalNumberOfQuestion }}

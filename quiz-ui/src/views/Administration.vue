@@ -1,4 +1,4 @@
-<template>
+<template>      
   <div class="container text-center">
     <div v-if="token" class="row justify-content-center align-items-center">
       <label style="color: white" class="text-dark" for="name"></label>

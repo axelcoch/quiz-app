@@ -34,7 +34,7 @@ def build_token():
     except Exception as e:
         return e
 
-
+    
 def decode_token(auth_token):
     """
     Decodes the auth token

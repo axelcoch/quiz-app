@@ -1,4 +1,4 @@
-<template>
+<template>        
   <div v-if="question_list.length == 0">
     <img src="../assets/vagabond_no.jpg" alt="musashi" />
   </div>
